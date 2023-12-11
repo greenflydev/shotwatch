@@ -79,15 +79,22 @@ public class ScreenShotObserver extends ContentObserver {
     }
 
     private ScreenshotData generateScreenshotDataFromCursor(Cursor cursor) {
-        final long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
-        final String fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
-        final String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        int idCol = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+        int fileCol = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        int pathCol = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
-        if (isPathScreenshot(path) && isFileScreenshot(fileName)) {
-            return new ScreenshotData(id, fileName, path);
-        } else {
-            return null;
+        if (idCol >= 0 && fileCol >= 0 && pathCol >= 0) {
+            final long id = cursor.getLong(idCol);
+            final String fileName = cursor.getString(fileCol);
+            final String path = cursor.getString(pathCol);
+
+            if (isPathScreenshot(path) && isFileScreenshot(fileName)) {
+                return new ScreenshotData(id, fileName, path);
+            } else {
+                return null;
+            }
         }
+        return null;
     }
 
     private boolean isFileScreenshot(String fileName) {
